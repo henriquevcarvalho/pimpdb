@@ -19,6 +19,7 @@ type ResponseError struct {
 type SessionCache struct {
 	User		string
 	Id 			string
+	Sid 		string
 }
 
 func rescue() {
@@ -68,7 +69,7 @@ func save(c echo.Context) error {
 		})
 	}
 
-	err := db.Save( x.Id, x)
+	err := db.Save(x.Sid, x.Id)
 
 	if err != nil {
 		return c.JSON(http.StatusOK, false)
