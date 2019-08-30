@@ -23,11 +23,12 @@ func NewCache() *Cache {
 }
 
 func (p *PimpDB) Save(id string, x interface{}) error {
-	fmt.Println("[x] Pimping : "+id, x)
+	fmt.Println("[x] Pimping : "+ id, x)
 	return p.Cache.Service.Add(id, x, cache.NoExpiration)
 }
 
 func (p *PimpDB) Get(id string) (interface{}, bool) {
+	fmt.Println("[x] Hoe nr: "+ id)
 	val, found := p.Cache.Service.Get(id)
 	return val, found
 }
