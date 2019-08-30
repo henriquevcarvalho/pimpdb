@@ -66,7 +66,7 @@ func get(c echo.Context) error {
 
 	id := c.Param("id")
 	if x, found := db.Get(id); found {
-		Log.Println("[x] Hoe nr: " + id, x)
+		Log.Println("[x] Getting Hoe nr: " + id, x)
 		return c.JSON(http.StatusOK, x.(*SessionCache).Id)
 	}
 
@@ -90,7 +90,7 @@ func save(c echo.Context) error {
 		return c.JSON(http.StatusOK, false)
 	}
 
-	Log.Println("[x] Hoe nr: " + x.Sid, x)
+	Log.Println("[x] Saving Hoe nr: " + x.Sid, x)
 	return c.JSON(http.StatusOK, true)
 }
 
