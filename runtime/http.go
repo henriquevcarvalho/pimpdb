@@ -69,7 +69,7 @@ func save(c echo.Context) error {
 		})
 	}
 
-	err := db.Save(x.Sid, x.Id)
+	err := db.Save(x.Sid, x)
 
 	if err != nil {
 		return c.JSON(http.StatusOK, false)
