@@ -1,7 +1,12 @@
 package pimpdb
 
+import (
+	"log"
+)
+
 type PimpDB struct {
-	Cache *Cache
+	Cache 		*Cache
+	Log			*log.Logger
 }
 
 func (p PimpDB) Init() *PimpDB {

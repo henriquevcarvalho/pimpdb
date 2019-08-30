@@ -13,7 +13,6 @@ import (
 var err error
 var db *pimpdb.PimpDB
 var e *echo.Echo
-var Log *log.Logger
 
 type ResponseError struct {
 	Code    int    `json:"code"`
@@ -45,9 +44,8 @@ func main() {
 
 	defer f.Close()
 
-	Log = log.New(f, "prefix", log.LstdFlags)
-
 	db = pimpdb.PimpDB{}.Init()
+	db.Log = log.New(f, "prefix", log.LstdFlags)
 
 	e = echo.New()
 	e.Use(middleware.Logger())
@@ -66,11 +64,11 @@ func get(c echo.Context) error {
 
 	id := c.Param("id")
 	if x, found := db.Get(id); found {
-		Log.Println("[x] Getting Hoe nr: " + id, x)
+		db.Log.Println("[x] Getting Hoe nr: " + id, x)
 		return c.JSON(http.StatusOK, x.(*SessionCache).Id)
 	}
 
-	Log.Println("[x] Failed to pimp: " + id)
+	db.Log.Println("[x] Failed to pimp: " + id)
 	return c.JSON(http.StatusOK, false)
 }
 
@@ -86,11 +84,11 @@ func save(c echo.Context) error {
 
 	err := db.Save(x.Sid, x)
 	if err != nil {
-		Log.Println("[x] Failed to pimp: ", err)
+		db.Log.Println("[x] Failed to pimp: ", err)
 		return c.JSON(http.StatusOK, false)
 	}
 
-	Log.Println("[x] Saving Hoe nr: " + x.Sid, x)
+	db.Log.Println("[x] Saving Hoe nr: " + x.Sid, x)
 	return c.JSON(http.StatusOK, true)
 }
 
