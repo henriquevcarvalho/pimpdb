@@ -1,18 +1,20 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/badtheory/pimpdb"
+	"github.com/badtheory/worst"
+	"github.com/go-chi/chi"
+	"io"
 	"log"
 	"net/http"
 	"os"
-	"pimpdb"
 )
 
 var err error
 var db *pimpdb.PimpDB
-var e *echo.Echo
+var ws *worst.Worst
 
 type ResponseError struct {
 	Code    int    `json:"code"`
@@ -37,58 +39,73 @@ func main() {
 
 	defer rescue()
 
-	f, err := os.OpenFile("info.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	f, err := os.OpenFile("./info.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
 	}
 
 	defer f.Close()
 
-	db = pimpdb.PimpDB{}.Init()
-	db.Log = log.New(f, "prefix", log.LstdFlags)
+	wrt := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(wrt)
+	log.Println("[x] PimpDB logs started")
 
-	e = echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.RequestID())
-	e.Use(middleware.Recover())
+	db = pimpdb.New()
+	db.SetCacheOptions()
 
-	e.GET("/get/:id", get)
-	e.POST("/save", save)
+	ws = worst.New(worst.Options{
+		Server: &http.Server{
+			Addr: "localhost:1339",
+		},
+		Static: worst.Static{
+			Url: "/public/*",
+			Path: "/home/paulo/Desktop/public",
+		},
+	})
 
-	e.Logger.SetOutput(f)
-	e.Logger.Fatal(e.Start(":1328"))
+	ws.Router.Get("/get/{id}", get)
+	ws.Router.Post("/save", save)
+	ws.Run()
 
 }
 
-func get(c echo.Context) error {
+func get(w http.ResponseWriter, r *http.Request) {
 
-	id := c.Param("id")
-	if x, found := db.Get(id); found {
-		db.Log.Println("[x] Getting Hoe nr: " + id, x)
-		return c.JSON(http.StatusOK, x.(*SessionCache).Id)
+	id := chi.URLParam(r, "id")
+	if x, found := db.Cache.Get(id); found {
+		log.Println("[x] Getting Hoe nr: " + id, x)
+		ws.Router.Render.JSON(w, http.StatusOK, x.(*SessionCache).Id)
+		return
 	}
 
-	db.Log.Println("[x] Failed to pimp: " + id)
-	return c.JSON(http.StatusOK, false)
+	log.Println("[x] Failed to pimp: " + id)
+	ws.Router.Render.JSON(w, http.StatusOK, false)
+	return
+
 }
 
-func save(c echo.Context) error {
+func save(w http.ResponseWriter, r *http.Request) {
 
-	x := new(SessionCache)
-	if err = c.Bind(x); err != nil {
-		return c.JSON(http.StatusInternalServerError, ResponseError{
+	var x SessionCache
+	if err = json.NewDecoder(r.Body).Decode(&x); err != nil {
+		ws.Router.Render.JSON(w, http.StatusOK, ResponseError{
 			http.StatusInternalServerError,
 			err.Error(),
 		})
+		return
 	}
 
-	err := db.Save(x.Sid, x)
+	err := db.Cache.Save(x.Sid, x)
 	if err != nil {
-		db.Log.Println("[x] Failed to pimp: ", err)
-		return c.JSON(http.StatusOK, false)
+		log.Println("[x] Failed to pimp: ", err)
+		ws.Router.Render.JSON(w, http.StatusOK, false)
+		return
 	}
 
-	db.Log.Println("[x] Saving Hoe nr: " + x.Sid, x)
-	return c.JSON(http.StatusOK, true)
+	log.Println("[x] Saving Hoe nr: " + x.Sid, x)
+	ws.Router.Render.JSON(w, http.StatusOK, true)
+	return
+
 }
 

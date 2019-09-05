@@ -1,14 +1,10 @@
 package pimpdb
 
-import (
-	"log"
-)
-
 type PimpDB struct {
-	Cache 		*Cache
-	Log			*log.Logger
+	Cache 		Cache
 }
 
 func New() *PimpDB {
-	return &PimpDB{}
+	p := &PimpDB{}
+	return p
 }
