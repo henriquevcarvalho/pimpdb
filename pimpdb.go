@@ -9,7 +9,6 @@ type PimpDB struct {
 	Log			*log.Logger
 }
 
-func (p PimpDB) Init() *PimpDB {
-	p.Cache = NewCache()
-	return &p
+func New() *PimpDB {
+	return &PimpDB{}
 }

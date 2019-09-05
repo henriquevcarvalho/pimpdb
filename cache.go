@@ -1,13 +1,12 @@
 package pimpdb
 
 import (
-	"fmt"
 	"github.com/patrickmn/go-cache"
+	"log"
 )
 
 type Cache struct {
 	Service *cache.Cache
-	*PimpDB
 }
 
 type CachedSession struct {
@@ -16,19 +15,21 @@ type CachedSession struct {
 	*Cache
 }
 
-func NewCache() *Cache {
-	c := new(Cache)
-	c.Service = cache.New(cache.NoExpiration, cache.NoExpiration)
-	return c
+func (p *PimpDB) SetCacheOptions(opt ...Cache) {
+	if len(opt) == 0 {
+		p.Cache.Service = cache.New(cache.NoExpiration, cache.NoExpiration)
+	} else {
+		p.Cache = &opt[0]
+	}
 }
 
-func (p *PimpDB) Save(id string, x interface{}) error {
-	fmt.Println("[x] Pimping : "+ id, x)
-	return p.Cache.Service.Add(id, x, cache.NoExpiration)
+func (p *Cache) Save(id string, x interface{}) error {
+	log.Println("[x] Pimping : "+ id, x)
+	return p.Service.Add(id, x, cache.NoExpiration)
 }
 
-func (p *PimpDB) Get(id string) (interface{}, bool) {
-	fmt.Println("[x] Hoe nr: "+ id)
-	val, found := p.Cache.Service.Get(id)
+func (p *Cache) Get(id string) (interface{}, bool) {
+	log.Println("[x] Hoe nr: "+ id)
+	val, found := p.Service.Get(id)
 	return val, found
 }
