@@ -4,7 +4,7 @@ import (
 	"github.com/badtheory/informer"
 )
 
-func setLoggerOptions(opt ...informer.Configuration) {
+func (p * PimpDB) SetLoggerOptions(opt ...informer.Configuration) {
 
 	var o informer.Configuration
 
