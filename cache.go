@@ -28,7 +28,7 @@ func (p *Cache) Save(id string, x interface{}) error {
 }
 
 func (p *Cache) Get(id string) (interface{}, bool) {
-	logGet(id)
+	LogGet(id)
 	val, found := p.Service.Get(id)
 	return val, found
 }
