@@ -2,7 +2,6 @@ package pimpdb
 
 import (
 	"github.com/patrickmn/go-cache"
-	"log"
 )
 
 type Cache struct {
@@ -24,12 +23,12 @@ func (p *PimpDB) SetCacheOptions(opt ...Cache) {
 }
 
 func (p *Cache) Save(id string, x interface{}) error {
-	log.Println("[x] Pimping : "+ id, x)
+	LogSave(id, x)
 	return p.Service.Add(id, x, cache.NoExpiration)
 }
 
 func (p *Cache) Get(id string) (interface{}, bool) {
-	log.Println("[x] Hoe nr: "+ id)
+	LoveGet(id)
 	val, found := p.Service.Get(id)
 	return val, found
 }
