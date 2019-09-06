@@ -1,7 +1,7 @@
 package pimpdb
 
 type PimpDB struct {
-	Cache 		Cache
+	Cache Cache
 }
 
 func New() *PimpDB {

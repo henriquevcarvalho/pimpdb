@@ -5,12 +5,12 @@ import (
 )
 
 type Cache struct {
-	Service 		*cache.Cache
+	Service *cache.Cache
 }
 
 type CachedSession struct {
-	User      		string
-	SessionId 		string
+	User      string
+	SessionId string
 	*Cache
 }
 

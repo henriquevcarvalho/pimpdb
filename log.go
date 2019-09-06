@@ -4,7 +4,7 @@ import (
 	"github.com/badtheory/informer"
 )
 
-func (p * PimpDB) SetLoggerOptions(opt ...informer.Configuration) {
+func (p *PimpDB) SetLoggerOptions(opt ...informer.Configuration) {
 
 	var o informer.Configuration
 
@@ -24,7 +24,7 @@ func (p * PimpDB) SetLoggerOptions(opt ...informer.Configuration) {
 func LogSave(id string, x interface{}) {
 	ctx := informer.WithFields(
 		informer.Fields{
-			"id": id,
+			"id":     id,
 			"entity": x,
 			"action": "save",
 		},
@@ -35,7 +35,7 @@ func LogSave(id string, x interface{}) {
 func LogGet(id string) {
 	ctx := informer.WithFields(
 		informer.Fields{
-			"id": id,
+			"id":     id,
 			"action": "save",
 		},
 	)
