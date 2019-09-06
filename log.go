@@ -32,7 +32,7 @@ func LogSave(id string, x interface{}) {
 	ctx.Infof("pimp_save_action")
 }
 
-func LoveGet(id string) {
+func LogGet(id string) {
 	ctx := informer.WithFields(
 		informer.Fields{
 			"id": id,
