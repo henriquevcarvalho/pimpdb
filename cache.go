@@ -8,12 +8,6 @@ type Cache struct {
 	Service *cache.Cache
 }
 
-type CachedSession struct {
-	User      string
-	SessionId string
-	*Cache
-}
-
 func (p *PimpDB) SetCacheOptions(opt ...Cache) {
 	if len(opt) == 0 {
 		p.Cache.Service = cache.New(cache.NoExpiration, cache.NoExpiration)
