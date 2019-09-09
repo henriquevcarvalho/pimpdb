@@ -16,7 +16,7 @@ func (p *PimpDB) SetCacheOptions(opt ...Cache) {
 	}
 }
 
-func (p *Cache) Save(id string, x interface{}) error {
+func (p *Cache) Save(id string, x *interface{}) error {
 	LogSave(id, x)
 	return p.Service.Add(id, x, cache.NoExpiration)
 }
