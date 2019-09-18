@@ -21,6 +21,11 @@ func (p *Cache) Save(id string, x *interface{}) error {
 	return p.Service.Add(id, x, cache.NoExpiration)
 }
 
+func (p *Cache) ForceSave(id string, x *interface{}) {
+	LogSave(id, x)
+	p.Service.Set(id, x, cache.NoExpiration)
+}
+
 func (p *Cache) Get(id string) (interface{}, bool) {
 	LogGet(id)
 	val, found := p.Service.Get(id)
