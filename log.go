@@ -21,23 +21,13 @@ func (p *PimpDB) SetLoggerOptions(opt ...informer.Configuration) {
 
 }
 
-func LogSave(id string, x interface{}) {
+func LogDefault(id string, x interface{}, action string) {
 	ctx := informer.WithFields(
 		informer.Fields{
 			"id":     id,
 			"entity": x,
-			"action": "save",
+			"action": action,
 		},
 	)
-	ctx.Infof("pimp_save_action")
-}
-
-func LogGet(id string) {
-	ctx := informer.WithFields(
-		informer.Fields{
-			"id":     id,
-			"action": "save",
-		},
-	)
-	ctx.Infof("pimp_get_action")
+	ctx.Infof("pimp_memory_action")
 }
