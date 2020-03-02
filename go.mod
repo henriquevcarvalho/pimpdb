@@ -9,4 +9,5 @@ require (
 	github.com/go-chi/render v1.0.1 // indirect
 	github.com/labstack/echo/v4 v4.1.10 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/pkg/errors v0.8.1
 )
