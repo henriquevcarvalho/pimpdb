@@ -1,4 +1,4 @@
-module github.com/badtheory/pimpdb
+module pimpdb
 
 go 1.12
 

@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/badtheory/pimpdb"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"log"
 	"net/http"
 	"os"
-	"github.com/badtheory/pimpd"
+	"pimpdb"
 )
 
 var err error
@@ -21,9 +20,9 @@ type ResponseError struct {
 }
 
 type SessionCache struct {
-	User		string
-	Id 			string
-	Sid 		string
+	User string
+	Id   string
+	Sid  string
 }
 
 func rescue() {
@@ -45,10 +44,10 @@ func main() {
 
 	defer f.Close()
 
-	db = pimpdb.PimpDB{}.
-	db.Log = log.New(f, "prefix", log.LstdFlags)
-
-	e = echo.New()
+	db = pimpdb.New()
+	db.SetCacheOptions()
+	db.SetLoggerOptions()
+	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Recover())
@@ -64,12 +63,9 @@ func main() {
 func get(c echo.Context) error {
 
 	id := c.Param("id")
-	if x, found := db.Get(id); found {
-		db.Log.Println("[x] Getting Hoe nr: " + id, x)
+	if x, found := db.Cache.Get(id); found {
 		return c.JSON(http.StatusOK, x.(*SessionCache).Id)
 	}
-
-	db.Log.Println("[x] Failed to pimp: " + id)
 	return c.JSON(http.StatusOK, false)
 }
 
@@ -83,12 +79,10 @@ func save(c echo.Context) error {
 		})
 	}
 
-	err := db.Save(x.Sid, x)
+	err := db.Cache.Set(x.Sid, x, false)
 	if err != nil {
-		db.Log.Println("[x] Failed to pimp: ", err)
 		return c.JSON(http.StatusOK, false)
 	}
 
-	db.Log.Println("[x] Saving Hoe nr: " + x.Sid, x)
 	return c.JSON(http.StatusOK, true)
 }
