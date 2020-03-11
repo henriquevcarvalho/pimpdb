@@ -2,7 +2,6 @@ package pimpdb
 
 import (
 	"github.com/patrickmn/go-cache"
-	"github.com/pkg/errors"
 )
 
 type Cache struct {
@@ -22,13 +21,14 @@ func (p *Cache) checkSet(id string, x interface{}) error {
 	return p.Service.Add(id, x, cache.NoExpiration)
 }
 
-func (p *Cache) Set(id string, x interface{}, exists bool) error {
-	if exists {
-		return p.checkSet(id, x)
+func (p *Cache) Set(id string, x interface{}) bool {
+	if _, found := p.Service.Get(id); found {
+		return false
 	}
+
 	LogDefault(id, x, "set")
 	p.Service.Set(id, x, cache.NoExpiration)
-	return errors.New("")
+	return true
 }
 
 func (p *Cache) Replace(id string, x interface{}) error {

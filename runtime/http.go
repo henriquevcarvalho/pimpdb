@@ -79,10 +79,9 @@ func save(c echo.Context) error {
 		})
 	}
 
-	err := db.Cache.Set(x.Sid, x, false)
-	if err != nil {
-		return c.JSON(http.StatusOK, false)
-	}
+	 if exists := db.Cache.Set(x.Sid, x); exists {
+		 return c.JSON(http.StatusOK, true)
+	 }
 
-	return c.JSON(http.StatusOK, true)
+	return c.JSON(http.StatusOK, false)
 }
